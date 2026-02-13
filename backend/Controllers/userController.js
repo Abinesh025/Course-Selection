@@ -1,6 +1,9 @@
 import User from "../Model/UserModel.js";
 import bcrypt from "bcryptjs";
+import { getCookies } from "../Utils/Cookies.js";
 
+
+// /api/v1/signin
 export const getUser = async(req,res)=>{
 
     try
@@ -43,5 +46,31 @@ export const getUser = async(req,res)=>{
     catch(error)
     {
         return res.status(500).json({success:false,message:"Internal Server Error"});
+    }
+}
+
+// /api/v1/login
+export const getLogin = async(req,res)=>{
+    try{
+        const {name,password} = req.body;
+        const user = await User.findOne({name});
+
+        if(!user){
+            return res.status(400).json({success:false,message:"User Not Found"});
+        }
+
+        const passwordVerify = await bcrypt.compare(password,user.password || "");
+
+        if(!passwordVerify){
+            return res.status(400).json({success:false,message:"Invalid Password"});
+        }
+
+        if(user){
+            getCookies(user._id,res);
+            res.status(200).json({success:true,user});
+        }
+    }
+    catch(error){
+        return res.status(500).json({success:false,message:`Internall Server Error ${error.message}`});
     }
 }
