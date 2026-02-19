@@ -74,3 +74,27 @@ export const getLogin = async(req,res)=>{
         return res.status(500).json({success:false,message:`Internall Server Error ${error.message}`});
     }
 }
+
+// /api/v1/logout
+export const getLogOut = async(req,res)=>{
+    
+    return res.cookie("JWT",null,{
+        maxAge:new Date(Date.now()),
+        httpOnly:true,
+    }).json({success:true,message:"Logout SuccessFully"});
+}
+
+// /api/v1/profile
+export const getCurrentUser = async(req,res)=>{
+    try{
+        const user = await User.findById({_id:req.user._id});
+
+        if(!user){
+            return res.status(400).json({success:false,message:"User Not Found"});
+        }
+
+        return res.status(200).json({success:true,user});
+    }catch(error){
+        return res.status(500).json({success:false,message:"Internal Server Error in Profile"});
+    }
+}
