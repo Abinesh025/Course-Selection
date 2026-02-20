@@ -5,7 +5,6 @@ import { getCookies } from "../Utils/Cookies.js";
 
 // /api/v1/signin
 export const getUser = async(req,res)=>{
-
     try
     {
         const {name,email,password} = req.body;
